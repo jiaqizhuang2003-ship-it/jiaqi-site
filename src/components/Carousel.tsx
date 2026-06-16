@@ -6,6 +6,7 @@ import {
   useMotionValue,
   useMotionValueEvent,
   useReducedMotion,
+  useSpring,
   useTransform,
 } from "framer-motion";
 import type { AnimationPlaybackControls, MotionValue } from "framer-motion";
@@ -21,7 +22,8 @@ import {
 } from "react";
 
 const CARD_GAP = 28;
-const SNAP_DELAY = 150;
+const INTRO_PROGRESS = 0.92;
+const WHEEL_FACTOR = 760;
 
 type CarouselProps = {
   children: ReactNode;
@@ -32,6 +34,8 @@ type CarouselProps = {
 type CarouselRulerProps = {
   count: number;
   currentIndex: number;
+  progress: MotionValue<number>;
+  maxProgress: number;
   onSelect: (index: number) => void;
 };
 
@@ -39,24 +43,36 @@ function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max);
 }
 
-function nearestIndex(position: number, count: number, viewport: number, card: number) {
-  if (count <= 1) {
-    return 0;
-  }
-
-  const stride = card + CARD_GAP;
-  const index = Math.round((viewport / 2 - card / 2 - position) / stride);
-
-  return clamp(index, 0, count - 1);
+function indexToProgress(index: number) {
+  return index === 0 ? 0 : INTRO_PROGRESS + index;
 }
 
-function positionForIndex(index: number, viewport: number, card: number) {
-  return viewport / 2 - card / 2 - index * (card + CARD_GAP);
+function progressToVirtualIndex(progress: number) {
+  return progress <= INTRO_PROGRESS ? 0 : progress - INTRO_PROGRESS;
 }
 
-function CarouselRuler({ count, currentIndex, onSelect }: CarouselRulerProps) {
+function nearestIndexFromProgress(progress: number, count: number) {
+  return clamp(Math.round(progressToVirtualIndex(progress)), 0, count - 1);
+}
+
+function CarouselRuler({
+  count,
+  currentIndex,
+  progress,
+  maxProgress,
+  onSelect,
+}: CarouselRulerProps) {
+  const sliderX = useTransform(progress, (value) => {
+    if (maxProgress <= 0) {
+      return "0%";
+    }
+
+    return `${clamp(value / maxProgress, 0, 1) * 100}%`;
+  });
+
   return (
     <div className="carousel-ruler" aria-hidden={count <= 1}>
+      <motion.span className="carousel-ruler-slider" style={{ left: sliderX }} />
       {Array.from({ length: count }).map((_, index) => (
         <button
           key={index}
@@ -75,31 +91,38 @@ function CarouselRuler({ count, currentIndex, onSelect }: CarouselRulerProps) {
 function CarouselItem({
   children,
   index,
-  x,
-  viewportWidth,
-  cardWidth,
-  reduceMotion,
+  progress,
+  currentIndex,
 }: {
   children: ReactNode;
   index: number;
-  x: MotionValue<number>;
-  viewportWidth: number;
-  cardWidth: number;
-  reduceMotion: boolean;
+  progress: MotionValue<number>;
+  currentIndex: number;
 }) {
-  const center = viewportWidth / 2 - cardWidth / 2 - index * (cardWidth + CARD_GAP);
-  const distance = useTransform(x, (value) => Math.abs(value - center));
-  const scale = useTransform(distance, [0, cardWidth * 1.35], [1, 0.86]);
-  const opacity = useTransform(distance, [0, cardWidth * 1.25], [1, 0.42]);
-  const blur = useTransform(distance, [0, cardWidth * 1.35], ["blur(0px)", "blur(1.4px)"]);
+  const scale = useTransform(progress, (value) => {
+    const virtualIndex = progressToVirtualIndex(value);
+    const sideScale = clamp(1 - Math.abs(index - virtualIndex) * 0.12, 0.78, 1);
 
-  if (reduceMotion) {
-    return <div className="carousel-card-shell">{children}</div>;
-  }
+    if (index === 0 && value < INTRO_PROGRESS) {
+      const opening = value / INTRO_PROGRESS;
+      return sideScale * (1.48 - opening * 0.48);
+    }
+
+    return sideScale;
+  });
+  const opacity = useTransform(progress, (value) => {
+    const virtualIndex = progressToVirtualIndex(value);
+    return clamp(1 - Math.abs(index - virtualIndex) * 0.32, 0.38, 1);
+  });
+  const blur = useTransform(progress, (value) => {
+    const virtualIndex = progressToVirtualIndex(value);
+    return `blur(${Math.min(Math.abs(index - virtualIndex) * 1.2, 2)}px)`;
+  });
 
   return (
     <motion.div
       className="carousel-card-shell"
+      data-active={index === currentIndex}
       style={{ scale, opacity, filter: blur }}
     >
       {children}
@@ -111,51 +134,63 @@ export function Carousel({ children, ariaLabel, hint }: CarouselProps) {
   const items = useMemo(() => Children.toArray(children), [children]);
   const reduceMotion = useReducedMotion();
   const viewportRef = useRef<HTMLElement>(null);
-  const snapTimerRef = useRef<number | null>(null);
+  const progress = useMotionValue(0);
+  const smoothProgress = useSpring(progress, {
+    stiffness: 120,
+    damping: 28,
+    mass: 0.9,
+  });
   const animationRef = useRef<AnimationPlaybackControls | null>(null);
-  const targetRef = useRef(0);
-  const currentIndexRef = useRef(0);
-  const x = useMotionValue(0);
+  const dragStartProgressRef = useRef(0);
   const [viewportWidth, setViewportWidth] = useState(0);
   const [cardWidth, setCardWidth] = useState(560);
   const [currentIndex, setCurrentIndex] = useState(0);
   const count = items.length;
-  const maxX = viewportWidth > 0 ? positionForIndex(0, viewportWidth, cardWidth) : 0;
-  const minX =
-    viewportWidth > 0 ? positionForIndex(Math.max(count - 1, 0), viewportWidth, cardWidth) : 0;
+  const maxProgress = Math.max(0, INTRO_PROGRESS + count - 1);
+  const stride = cardWidth + CARD_GAP;
+  const trackX = useTransform(smoothProgress, (value) => {
+    const standardX =
+      viewportWidth / 2 - cardWidth / 2 - progressToVirtualIndex(value) * stride;
+
+    if (value < INTRO_PROGRESS) {
+      const opening = value / INTRO_PROGRESS;
+      return standardX + (1 - opening) * 22;
+    }
+
+    return standardX;
+  });
 
   const stopAnimation = useCallback(() => {
     animationRef.current?.stop();
     animationRef.current = null;
   }, []);
 
-  const goTo = useCallback((index: number) => {
-    if (viewportWidth === 0) {
-      return;
-    }
+  const setProgress = useCallback(
+    (value: number) => {
+      progress.set(clamp(value, 0, maxProgress));
+    },
+    [maxProgress, progress],
+  );
 
-    const next = clamp(index, 0, count - 1);
-    const target = positionForIndex(next, viewportWidth, cardWidth);
-    currentIndexRef.current = next;
-    targetRef.current = target;
-    stopAnimation();
-    animationRef.current = animate(x, target, {
-      type: "spring",
-      stiffness: 220,
-      damping: 34,
-      mass: 0.9,
-    });
-  }, [cardWidth, count, stopAnimation, viewportWidth, x]);
+  const animateToProgress = useCallback(
+    (value: number) => {
+      stopAnimation();
+      animationRef.current = animate(progress, clamp(value, 0, maxProgress), {
+        type: "spring",
+        stiffness: 150,
+        damping: 30,
+        mass: 0.9,
+      });
+    },
+    [maxProgress, progress, stopAnimation],
+  );
 
-  const scheduleSnap = useCallback(() => {
-    if (snapTimerRef.current) {
-      window.clearTimeout(snapTimerRef.current);
-    }
-
-    snapTimerRef.current = window.setTimeout(() => {
-      goTo(nearestIndex(x.get(), count, viewportWidth, cardWidth));
-    }, SNAP_DELAY);
-  }, [cardWidth, count, goTo, viewportWidth, x]);
+  const goToIndex = useCallback(
+    (index: number) => {
+      animateToProgress(indexToProgress(clamp(index, 0, count - 1)));
+    },
+    [animateToProgress, count],
+  );
 
   useEffect(() => {
     const viewport = viewportRef.current;
@@ -168,16 +203,8 @@ export function Carousel({ children, ariaLabel, hint }: CarouselProps) {
 
     function updateSize() {
       const width = viewportElement.clientWidth;
-      const nextCardWidth = clamp(width * 0.72, 280, 640);
       setViewportWidth(width);
-      setCardWidth(nextCardWidth);
-      const target = positionForIndex(
-        currentIndexRef.current,
-        width,
-        nextCardWidth,
-      );
-      targetRef.current = target;
-      x.set(target);
+      setCardWidth(clamp(width * 0.72, 300, 660));
     }
 
     updateSize();
@@ -186,7 +213,7 @@ export function Carousel({ children, ariaLabel, hint }: CarouselProps) {
     observer.observe(viewportElement);
 
     return () => observer.disconnect();
-  }, [x]);
+  }, []);
 
   useEffect(() => {
     const viewport = viewportRef.current;
@@ -196,10 +223,13 @@ export function Carousel({ children, ariaLabel, hint }: CarouselProps) {
     }
 
     function onWheel(event: WheelEvent) {
-      const delta = Math.abs(event.deltaY) > Math.abs(event.deltaX) ? event.deltaY : event.deltaX;
-      const current = x.get();
-      const atStart = current >= maxX - 1 && delta < 0;
-      const atEnd = current <= minX + 1 && delta > 0;
+      const delta =
+        Math.abs(event.deltaY) > Math.abs(event.deltaX)
+          ? event.deltaY
+          : event.deltaX;
+      const current = progress.get();
+      const atStart = current <= 0 && delta < 0;
+      const atEnd = current >= maxProgress && delta > 0;
 
       if (atStart || atEnd) {
         return;
@@ -207,52 +237,37 @@ export function Carousel({ children, ariaLabel, hint }: CarouselProps) {
 
       event.preventDefault();
       stopAnimation();
-      const next = clamp(targetRef.current - delta, minX, maxX);
-      targetRef.current = next;
-      x.set(next);
-      scheduleSnap();
+      setProgress(current + delta / WHEEL_FACTOR);
     }
 
     viewport.addEventListener("wheel", onWheel, { passive: false });
 
     return () => viewport.removeEventListener("wheel", onWheel);
-  }, [
-    cardWidth,
-    count,
-    maxX,
-    minX,
-    reduceMotion,
-    scheduleSnap,
-    stopAnimation,
-    viewportWidth,
-    x,
-  ]);
+  }, [count, maxProgress, progress, reduceMotion, setProgress, stopAnimation]);
 
-  useMotionValueEvent(x, "change", (latest) => {
-    const next = nearestIndex(latest, count, viewportWidth, cardWidth);
-    currentIndexRef.current = next;
-    setCurrentIndex(next);
+  useMotionValueEvent(smoothProgress, "change", (latest) => {
+    setCurrentIndex(nearestIndexFromProgress(latest, count));
   });
 
   function onKeyDown(event: KeyboardEvent<HTMLElement>) {
     if (event.key === "ArrowRight") {
       event.preventDefault();
-      goTo(currentIndex + 1);
+      goToIndex(currentIndex + 1);
     }
 
     if (event.key === "ArrowLeft") {
       event.preventDefault();
-      goTo(currentIndex - 1);
+      goToIndex(currentIndex - 1);
     }
 
     if (event.key === "Home") {
       event.preventDefault();
-      goTo(0);
+      animateToProgress(0);
     }
 
     if (event.key === "End") {
       event.preventDefault();
-      goTo(count - 1);
+      animateToProgress(maxProgress);
     }
   }
 
@@ -272,11 +287,17 @@ export function Carousel({ children, ariaLabel, hint }: CarouselProps) {
     }
 
     return (
-      <section className="carousel-root" aria-label={ariaLabel}>
+      <section
+        className="carousel-root"
+        aria-label={ariaLabel}
+        data-accent="electric-blue"
+      >
         <p className="sr-only">{hint}</p>
         <CarouselRuler
           count={count}
           currentIndex={currentIndex}
+          progress={smoothProgress}
+          maxProgress={maxProgress}
           onSelect={scrollToNativeCard}
         />
         <div
@@ -291,6 +312,7 @@ export function Carousel({ children, ariaLabel, hint }: CarouselProps) {
               key={index}
               className="carousel-card-shell"
               data-carousel-index={index}
+              data-active={index === currentIndex}
             >
               {item}
             </div>
@@ -305,31 +327,43 @@ export function Carousel({ children, ariaLabel, hint }: CarouselProps) {
       ref={viewportRef}
       className="carousel-root"
       aria-label={ariaLabel}
+      data-accent="electric-blue"
       tabIndex={0}
       onKeyDown={onKeyDown}
     >
       <p className="sr-only">{hint}</p>
-      <CarouselRuler count={count} currentIndex={currentIndex} onSelect={goTo} />
+      <CarouselRuler
+        count={count}
+        currentIndex={currentIndex}
+        progress={smoothProgress}
+        maxProgress={maxProgress}
+        onSelect={goToIndex}
+      />
       <motion.div
         className="carousel-track"
-        style={{ x, gap: CARD_GAP }}
+        style={{ x: trackX, gap: CARD_GAP }}
         drag="x"
         dragMomentum={false}
-        dragElastic={0.08}
-        onDragStart={stopAnimation}
+        dragElastic={0.06}
+        onDragStart={() => {
+          stopAnimation();
+          dragStartProgressRef.current = progress.get();
+        }}
+        onDrag={(_, info) => {
+          setProgress(dragStartProgressRef.current - info.offset.x / stride);
+        }}
         onDragEnd={(_, info) => {
-          const projected = x.get() + info.velocity.x * 0.16;
-          goTo(nearestIndex(projected, count, viewportWidth, cardWidth));
+          const projected =
+            progress.get() - (info.velocity.x / Math.max(stride, 1)) * 0.18;
+          animateToProgress(projected);
         }}
       >
         {items.map((item, index) => (
           <CarouselItem
             key={index}
             index={index}
-            x={x}
-            viewportWidth={viewportWidth}
-            cardWidth={cardWidth}
-            reduceMotion={false}
+            progress={smoothProgress}
+            currentIndex={currentIndex}
           >
             {item}
           </CarouselItem>

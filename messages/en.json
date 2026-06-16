@@ -5,7 +5,6 @@
     "writing": "Writing",
     "about": "About",
     "contact": "Contact",
-    "themeToggle": "Toggle theme",
     "languageSwitch": "Switch language"
   },
   "footer": {
@@ -31,7 +30,22 @@
     "intro": "I design and build custom AI agents for teams and individuals: systems that reason over messy knowledge, take careful action, and fit into the way work already happens.",
     "now": "Thinking about long-horizon agents, durable memory, and the quiet interfaces that make AI feel like infrastructure.",
     "deckLabel": "Home sections",
-    "introCard": "Intro"
+    "introCard": "Intro",
+    "widgets": {
+      "available": "Available",
+      "localTime": "Local",
+      "agents": "agents",
+      "workflows": "workflows",
+      "latestNote": "Latest note",
+      "reveal": "Memory is a product surface, not a hidden backend feature.",
+      "skills": ["agents", "workflows", "memory"],
+      "copied": "Copied",
+      "copyEmail": "Copy email",
+      "email": "Email",
+      "github": "GitHub",
+      "twitter": "X",
+      "linkedin": "LinkedIn"
+    }
   },
   "work": {
     "title": "My Work",

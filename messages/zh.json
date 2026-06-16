@@ -5,7 +5,6 @@
     "writing": "写作",
     "about": "关于",
     "contact": "联系",
-    "themeToggle": "切换主题",
     "languageSwitch": "切换语言"
   },
   "footer": {
@@ -31,7 +30,22 @@
     "intro": "我为团队和个人设计、构建定制 AI 智能体：它们能理解复杂知识，谨慎行动，并自然融入已有工作流。",
     "now": "正在思考长周期智能体、持久记忆，以及让 AI 像基础设施一样安静可靠的界面。",
     "deckLabel": "首页栏目",
-    "introCard": "简介"
+    "introCard": "简介",
+    "widgets": {
+      "available": "可交流",
+      "localTime": "本地",
+      "agents": "智能体",
+      "workflows": "工作流",
+      "latestNote": "最新笔记",
+      "reveal": "记忆是产品界面，而不是隐藏的后端能力。",
+      "skills": ["智能体", "工作流", "记忆"],
+      "copied": "已复制",
+      "copyEmail": "复制邮箱",
+      "email": "邮箱",
+      "github": "GitHub",
+      "twitter": "X",
+      "linkedin": "LinkedIn"
+    }
   },
   "work": {
     "title": "我的作品",

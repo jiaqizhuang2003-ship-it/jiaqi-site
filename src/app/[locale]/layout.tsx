@@ -14,20 +14,6 @@ import { PageTransition } from "@/components/PageTransition";
 import { routing, type Locale } from "@/i18n/routing";
 import "../globals.css";
 
-const themeScript = `
-(() => {
-  try {
-    const stored = localStorage.getItem("theme");
-    const theme = stored === "light" || stored === "dark"
-      ? stored
-      : (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
-    document.documentElement.dataset.theme = theme;
-  } catch {
-    document.documentElement.dataset.theme = "dark";
-  }
-})();
-`;
-
 export async function generateMetadata({
   params,
 }: {
@@ -83,9 +69,6 @@ export default async function LocaleLayout({
       className="h-full antialiased"
       suppressHydrationWarning
     >
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
-      </head>
       <body className="min-h-full">
         <NextIntlClientProvider locale={locale as Locale} messages={messages}>
           <FilmGrain />
