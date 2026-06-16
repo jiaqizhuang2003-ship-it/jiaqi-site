@@ -1,0 +1,27 @@
+---
+title: Agent Ops Console
+year: 2026
+role: Product engineer
+stack:
+  - Next.js
+  - TypeScript
+  - OpenAI
+  - Postgres
+status: Prototype
+summary: A control surface for monitoring long-running agents, reviewing decisions, and handing work back to humans.
+links:
+  - label: Notes
+    href: https://example.com/agent-ops-console
+---
+
+## Context
+
+Most agent demos end at the happy path. This project starts after the demo: when an agent is running across documents, tools, and approvals for days at a time.
+
+The console models each run as a timeline of intent, evidence, action, and uncertainty. A reviewer can inspect what the agent saw, what it inferred, and where it paused before taking a consequential step.
+
+## Shape
+
+The prototype focuses on simple operational primitives: queues, checkpoints, summaries, tool traces, and intervention notes. The goal is not to make autonomy feel magical. The goal is to make it inspectable enough to trust.
+
+The next pass would add richer policy controls and memory review, so teams can evolve agent behavior without turning every workflow change into a software release.

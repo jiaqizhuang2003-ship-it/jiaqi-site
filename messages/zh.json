@@ -1,0 +1,64 @@
+{
+  "nav": {
+    "primary": "主导航",
+    "work": "作品",
+    "writing": "写作",
+    "about": "关于",
+    "contact": "联系",
+    "themeToggle": "切换主题",
+    "languageSwitch": "切换语言"
+  },
+  "footer": {
+    "line": "Jiaqi Zhuang / {year}"
+  },
+  "common": {
+    "skip": "跳到正文",
+    "selectedWork": "精选作品",
+    "recentWriting": "近期写作",
+    "now": "近况 / 想法",
+    "allProjects": "全部项目",
+    "allWriting": "全部文章",
+    "backProjects": "返回项目",
+    "backWriting": "返回写作",
+    "metadata": "元信息",
+    "links": "链接"
+  },
+  "home": {
+    "title": "Jiaqi Zhuang",
+    "description": "AI Builder. 我构建能推进真实工作的智能体。",
+    "intro": "我为团队和个人设计、构建定制 AI 智能体：它们能理解复杂知识，谨慎行动，并自然融入已有工作流。",
+    "now": "正在思考长周期智能体、持久记忆，以及让 AI 像基础设施一样安静可靠的界面。"
+  },
+  "work": {
+    "title": "我的作品",
+    "description": "Jiaqi Zhuang 的实验、客户系统与 AI 原生工作流原型。",
+    "intro": "这里记录智能体、工作流系统与知识工具。有些来自客户场景，有些是个人实验，但都围绕真实可用的行为而构建。"
+  },
+  "projects": {
+    "title": "项目",
+    "description": "Jiaqi Zhuang 的 AI 智能体与工作流项目。",
+    "intro": "关于应用型智能体、知识系统与 AI 原生运营的项目记录。"
+  },
+  "writing": {
+    "title": "写作",
+    "description": "关于智能体、AI 原生工作流与有用系统的笔记。",
+    "intro": "一些短笔记，关于如何让 AI 系统更持久、更可检查，并在真实工作中更有用。"
+  },
+  "about": {
+    "title": "关于我",
+    "description": "关于 Jiaqi Zhuang：专注智能体与 AI 原生工作流的 AI Builder。",
+    "intro1": "我是 Jiaqi Zhuang，一名 AI Builder，专注为公司和个人构建实用的智能体。",
+    "intro2": "我的工作结合产品思考、软件工程与运营设计。我构建定制 AI 智能体，帮助人们更高效地搜索、判断、写作、协作和执行。",
+    "intro3": "我尤其关注长周期智能体、AI 原生工作流、持久知识系统，以及能让强大系统保持安静的交互界面。",
+    "portraitAlt": "Jiaqi Zhuang 的电子肖像占位图"
+  },
+  "contact": {
+    "title": "联系",
+    "description": "联系 Jiaqi Zhuang，讨论 AI 项目与合作。",
+    "intro": "欢迎交流有意思的 AI 项目，尤其是真实业务压力下的智能体和工作流。",
+    "email": "邮箱",
+    "github": "GitHub",
+    "twitter": "X / Twitter",
+    "linkedin": "LinkedIn"
+  }
+}

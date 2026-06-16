@@ -1,0 +1,64 @@
+{
+  "nav": {
+    "primary": "Primary navigation",
+    "work": "Work",
+    "writing": "Writing",
+    "about": "About",
+    "contact": "Contact",
+    "themeToggle": "Toggle theme",
+    "languageSwitch": "Switch language"
+  },
+  "footer": {
+    "line": "Jiaqi Zhuang / {year}"
+  },
+  "common": {
+    "skip": "Skip to content",
+    "selectedWork": "Selected Work",
+    "recentWriting": "Recent Writing",
+    "now": "Now / Thoughts",
+    "allProjects": "All Projects",
+    "allWriting": "All Writing",
+    "backProjects": "Back to projects",
+    "backWriting": "Back to writing",
+    "metadata": "Metadata",
+    "links": "Links"
+  },
+  "home": {
+    "title": "Jiaqi Zhuang",
+    "description": "AI Builder. I build agents that move real work forward.",
+    "intro": "I design and build custom AI agents for teams and individuals: systems that reason over messy knowledge, take careful action, and fit into the way work already happens.",
+    "now": "Thinking about long-horizon agents, durable memory, and the quiet interfaces that make AI feel like infrastructure."
+  },
+  "work": {
+    "title": "My Work",
+    "description": "Experiments, client systems, and AI-native workflow prototypes by Jiaqi Zhuang.",
+    "intro": "A running index of agents, workflow systems, and knowledge tools. Some are client-shaped, some are personal experiments, all are built around useful behavior."
+  },
+  "projects": {
+    "title": "Projects",
+    "description": "Selected AI agent and workflow projects by Jiaqi Zhuang.",
+    "intro": "Project notes on applied agents, knowledge systems, and AI-native operations."
+  },
+  "writing": {
+    "title": "Writing",
+    "description": "Notes on agents, AI-native workflows, and building useful systems.",
+    "intro": "Short notes on making AI systems more durable, inspectable, and useful in real work."
+  },
+  "about": {
+    "title": "About Me",
+    "description": "About Jiaqi Zhuang, an AI Builder working on agents and AI-native workflows.",
+    "intro1": "I am Jiaqi Zhuang, an AI Builder focused on practical agents for companies and individuals.",
+    "intro2": "My work sits between product thinking, software craft, and operational design. I build custom AI agents that help people search, decide, write, coordinate, and execute with more leverage.",
+    "intro3": "I am especially interested in long-horizon agents, AI-native workflows, durable knowledge systems, and interfaces that make powerful systems feel calm.",
+    "portraitAlt": "Electronic portrait placeholder for Jiaqi Zhuang"
+  },
+  "contact": {
+    "title": "Contact",
+    "description": "Contact Jiaqi Zhuang for AI projects and collaborations.",
+    "intro": "Open to interesting AI projects, especially agents and workflows with real operational pressure.",
+    "email": "Email",
+    "github": "GitHub",
+    "twitter": "X / Twitter",
+    "linkedin": "LinkedIn"
+  }
+}
