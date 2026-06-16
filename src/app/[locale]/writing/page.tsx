@@ -1,7 +1,15 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { WritingRow } from "@/components/WritingRow";
+import { Carousel } from "@/components/Carousel";
+import { Link } from "@/i18n/routing";
 import { getAllWriting } from "@/lib/content";
+
+const dateFormatter = new Intl.DateTimeFormat("en", {
+  month: "short",
+  day: "2-digit",
+  year: "numeric",
+  timeZone: "UTC",
+});
 
 export async function generateMetadata({
   params,
@@ -26,23 +34,28 @@ export default async function WritingPage({
   setRequestLocale(locale);
 
   const t = await getTranslations("writing");
+  const common = await getTranslations("common");
   const posts = getAllWriting();
 
   return (
-    <div className="space-y-12">
-      <header className="space-y-4">
-        <h1 className="text-[17px] font-medium leading-8 tracking-[-0.015em] text-primary">
-          {t("title")}
-        </h1>
-        <p className="max-w-2xl text-[14px] leading-7 text-secondary">
-          {t("intro")}
-        </p>
-      </header>
-      <div className="space-y-1">
-        {posts.map((post) => (
-          <WritingRow key={post.slug} post={post} />
-        ))}
-      </div>
-    </div>
+    <Carousel ariaLabel={t("deckLabel")} hint={common("carouselHint")}>
+      {posts.map((post) => (
+        <Link
+          key={post.slug}
+          href={`/writing/${post.slug}`}
+          className="deck-card deck-card-link"
+        >
+          <time className="deck-card-kicker" dateTime={post.date}>
+            {dateFormatter.format(new Date(`${post.date}T00:00:00Z`))}
+          </time>
+          <span className="deck-card-title">{post.title}</span>
+          <span className="deck-card-summary">{post.summary}</span>
+          <span className="deck-card-meta">{post.tags.join(" / ")}</span>
+          <span className="deck-card-arrow" aria-hidden="true">
+            -&gt;
+          </span>
+        </Link>
+      ))}
+    </Carousel>
   );
 }

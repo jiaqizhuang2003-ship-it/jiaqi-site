@@ -21,13 +21,17 @@
     "backProjects": "Back to projects",
     "backWriting": "Back to writing",
     "metadata": "Metadata",
-    "links": "Links"
+    "links": "Links",
+    "enter": "Enter",
+    "carouselHint": "Use vertical scroll, horizontal swipe, drag, or arrow keys to move through cards."
   },
   "home": {
     "title": "Jiaqi Zhuang",
     "description": "AI Builder. I build agents that move real work forward.",
     "intro": "I design and build custom AI agents for teams and individuals: systems that reason over messy knowledge, take careful action, and fit into the way work already happens.",
-    "now": "Thinking about long-horizon agents, durable memory, and the quiet interfaces that make AI feel like infrastructure."
+    "now": "Thinking about long-horizon agents, durable memory, and the quiet interfaces that make AI feel like infrastructure.",
+    "deckLabel": "Home sections",
+    "introCard": "Intro"
   },
   "work": {
     "title": "My Work",
@@ -37,12 +41,14 @@
   "projects": {
     "title": "Projects",
     "description": "Selected AI agent and workflow projects by Jiaqi Zhuang.",
-    "intro": "Project notes on applied agents, knowledge systems, and AI-native operations."
+    "intro": "Project notes on applied agents, knowledge systems, and AI-native operations.",
+    "deckLabel": "Project cards"
   },
   "writing": {
     "title": "Writing",
     "description": "Notes on agents, AI-native workflows, and building useful systems.",
-    "intro": "Short notes on making AI systems more durable, inspectable, and useful in real work."
+    "intro": "Short notes on making AI systems more durable, inspectable, and useful in real work.",
+    "deckLabel": "Writing cards"
   },
   "about": {
     "title": "About Me",

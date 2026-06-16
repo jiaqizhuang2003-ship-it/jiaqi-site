@@ -21,13 +21,17 @@
     "backProjects": "返回项目",
     "backWriting": "返回写作",
     "metadata": "元信息",
-    "links": "链接"
+    "links": "链接",
+    "enter": "进入",
+    "carouselHint": "使用纵向滚动、横向滑动、拖拽或方向键浏览卡片。"
   },
   "home": {
     "title": "Jiaqi Zhuang",
     "description": "AI Builder. 我构建能推进真实工作的智能体。",
     "intro": "我为团队和个人设计、构建定制 AI 智能体：它们能理解复杂知识，谨慎行动，并自然融入已有工作流。",
-    "now": "正在思考长周期智能体、持久记忆，以及让 AI 像基础设施一样安静可靠的界面。"
+    "now": "正在思考长周期智能体、持久记忆，以及让 AI 像基础设施一样安静可靠的界面。",
+    "deckLabel": "首页栏目",
+    "introCard": "简介"
   },
   "work": {
     "title": "我的作品",
@@ -37,12 +41,14 @@
   "projects": {
     "title": "项目",
     "description": "Jiaqi Zhuang 的 AI 智能体与工作流项目。",
-    "intro": "关于应用型智能体、知识系统与 AI 原生运营的项目记录。"
+    "intro": "关于应用型智能体、知识系统与 AI 原生运营的项目记录。",
+    "deckLabel": "项目卡片"
   },
   "writing": {
     "title": "写作",
     "description": "关于智能体、AI 原生工作流与有用系统的笔记。",
-    "intro": "一些短笔记，关于如何让 AI 系统更持久、更可检查，并在真实工作中更有用。"
+    "intro": "一些短笔记，关于如何让 AI 系统更持久、更可检查，并在真实工作中更有用。",
+    "deckLabel": "写作卡片"
   },
   "about": {
     "title": "关于我",
