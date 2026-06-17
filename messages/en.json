@@ -45,6 +45,25 @@
       "github": "GitHub",
       "twitter": "X",
       "linkedin": "LinkedIn"
+    },
+    "sheet": {
+      "srTitle": "Jiaqi Zhuang home page with horizontal sections for intro, work, projects, writing, about, and contact.",
+      "intro1": "Jiaqi",
+      "intro2": "Zhuang is",
+      "intro3": "an AI Builder",
+      "intro4": "building agents",
+      "intro5": "and AI-native",
+      "intro6": "workflows",
+      "workLabel": "custom agents and operations",
+      "projectsLabel": "selected systems and prototypes",
+      "writingLabel": "notes on agents and workflows",
+      "aboutLabel": "long-horizon agents, memory, tools",
+      "contactLabel": "contact",
+      "email": "Email",
+      "copied": "Copied",
+      "copyAnnouncement": "Copied email to clipboard",
+      "twitter": "X / Twitter",
+      "github": "GitHub"
     }
   },
   "work": {

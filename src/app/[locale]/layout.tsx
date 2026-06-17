@@ -6,6 +6,8 @@ import {
   getTranslations,
   setRequestLocale,
 } from "next-intl/server";
+import { GeistMono } from "geist/font/mono";
+import { GeistSans } from "geist/font/sans";
 import { Footer } from "@/components/Footer";
 import { FilmGrain } from "@/components/FilmGrain";
 import { MagneticCursor } from "@/components/MagneticCursor";
@@ -66,7 +68,7 @@ export default async function LocaleLayout({
   return (
     <html
       lang={locale}
-      className="h-full antialiased"
+      className={`${GeistSans.variable} ${GeistMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <body className="min-h-full">

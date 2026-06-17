@@ -45,6 +45,25 @@
       "github": "GitHub",
       "twitter": "X",
       "linkedin": "LinkedIn"
+    },
+    "sheet": {
+      "srTitle": "Jiaqi Zhuang 首页，包含简介、作品、项目、写作、关于和联系。",
+      "intro1": "Jiaqi",
+      "intro2": "Zhuang 是",
+      "intro3": "AI Builder",
+      "intro4": "构建智能体",
+      "intro5": "和 AI 原生",
+      "intro6": "工作流",
+      "workLabel": "定制智能体与运营系统",
+      "projectsLabel": "精选系统与原型",
+      "writingLabel": "关于智能体和工作流的笔记",
+      "aboutLabel": "长周期智能体、记忆与工具",
+      "contactLabel": "联系",
+      "email": "邮箱",
+      "copied": "已复制",
+      "copyAnnouncement": "邮箱已复制",
+      "twitter": "X / Twitter",
+      "github": "GitHub"
     }
   },
   "work": {
