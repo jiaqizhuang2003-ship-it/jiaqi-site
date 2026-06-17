@@ -10,7 +10,7 @@ export function Nav() {
   const isHome = pathname === "/";
 
   return (
-    <header className="mx-auto flex w-full max-w-3xl items-center justify-between px-5 py-7 sm:px-8">
+    <header className="mx-auto flex w-full max-w-xl items-center justify-between px-5 py-7 sm:px-8">
       <Link
         href="/"
         className="text-[13px] font-medium tracking-[-0.01em] text-primary transition-colors hover:text-accent focus-visible:focus-ring"

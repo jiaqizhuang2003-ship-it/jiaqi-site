@@ -16,7 +16,6 @@ import {
   useMemo,
   useRef,
   useState,
-  type ChangeEvent,
   type CSSProperties,
   type ReactNode,
 } from "react";
@@ -26,10 +25,18 @@ const SHEET_HEIGHT = 720;
 const FIRST_FRAME_STRIDE = 1900;
 const FRAME_STRIDE = 1400;
 const FRAME_COUNT = 6;
+const X_AXIS_TICKS = [-1200, -800, -400, 0, 400, 800, 1200];
+const Y_AXIS_TICKS = [0, 100, 200, 300, 400, 500];
 
 function getFrameLeft(index: number) {
   return index === 0 ? 0 : FIRST_FRAME_STRIDE + (index - 1) * FRAME_STRIDE;
 }
+
+type HomeSectionMarker = {
+  id: FrameIconName;
+  label: string;
+  value: number;
+};
 
 type SlideFrame = {
   kind: "slide";
@@ -67,6 +74,24 @@ export type HomeSheetContent = {
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max);
+}
+
+function getActiveMarker(value: number, markers: HomeSectionMarker[]) {
+  const active = markers.reduce(
+    (active, marker) =>
+      Math.abs(marker.value - value) < Math.abs(active.value - value) ? marker : active,
+    markers[0],
+  );
+
+  return Math.abs(active.value - value) <= FRAME_STRIDE / 2 ? active : null;
+}
+
+function formatCoordinate(value: number) {
+  return Math.round(value).toString().padStart(4, "0");
+}
+
+function formatYAxisTick(value: number) {
+  return value.toString().padStart(3, "0");
 }
 
 function getBaseScale() {
@@ -179,19 +204,14 @@ function FrameIcon({ name }: { name: FrameIconName }) {
 function IntroFrame({
   lines,
   subtitle,
-  inverseScale,
   reduceMotion,
 }: {
   lines: HomeSheetContent["introLines"];
   subtitle: string;
-  inverseScale: MotionValue<number>;
   reduceMotion: boolean;
 }) {
   return (
     <section className="home-frame home-frame-main" data-frame="intro" style={{ left: 0 }}>
-      <FloatingLabel inverseScale={inverseScale} active icon="intro">
-        Intro
-      </FloatingLabel>
       <h1 className="vh">{lines.map((line) => line.text).join(" ")}</h1>
       <Image
         src="/portrait.png"
@@ -304,55 +324,118 @@ function ContactFrameView({
   );
 }
 
-function HomeRuler({
+function ScrollInstrument({
   scroll,
   maxScroll,
+  markers,
   onSeek,
 }: {
   scroll: MotionValue<number>;
   maxScroll: number;
+  markers: HomeSectionMarker[];
   onSeek: (value: number) => void;
 }) {
-  const [rangeValue, setRangeValue] = useState(0);
-  const left = useTransform(scroll, (value) => `${(clamp(value / maxScroll, 0, 1) * 100).toFixed(2)}%`);
+  const [coordinates, setCoordinates] = useState({ progress: 0, x: -1200, y: 0 });
+  const [activeMarker, setActiveMarker] = useState<FrameIconName | null>(null);
+  const topRulerX = useTransform(scroll, (value) => value * -0.08);
+  const bottomRulerX = useTransform(scroll, (value) => value * -0.045);
+  const scanLeft = useTransform(scroll, (value) => `${(clamp(value / maxScroll, 0, 1) * 100).toFixed(2)}%`);
 
   useEffect(() => {
     return scroll.on("change", (value) => {
-      setRangeValue(clamp(value, 0, maxScroll));
+      const next = clamp(value, 0, maxScroll);
+      const progress = maxScroll > 0 ? clamp(next / maxScroll, 0, 1) : 0;
+      setCoordinates({
+        progress: Math.round(progress * 100),
+        x: Math.round(progress * 2400 - 1200),
+        y: Math.round(progress * 500),
+      });
+      setActiveMarker(getActiveMarker(next, markers)?.id ?? null);
     });
-  }, [maxScroll, scroll]);
-
-  function onRangeChange(event: ChangeEvent<HTMLInputElement>) {
-    const next = Number(event.currentTarget.value);
-    setRangeValue(next);
-    onSeek(next);
-  }
+  }, [markers, maxScroll, scroll]);
 
   return (
-    <div
-      className="home-minimap"
-      aria-label="Scroll sections"
-    >
-      <input
-        className="home-minimap-range"
-        type="range"
-        min={0}
-        max={maxScroll}
-        step={1}
-        value={rangeValue}
-        aria-label="Scroll sections"
-        onChange={onRangeChange}
+    <div className="home-scroll-instrument">
+      <motion.div
+        className="home-instrument-ruler home-instrument-ruler-top"
+        style={{ x: topRulerX }}
+        aria-hidden="true"
       />
-      <motion.span className="home-minimap-slider" style={{ left }} />
-      {Array.from({ length: 20 }).map((_, index) => (
-        <motion.span
-          key={index}
-          className="home-minimap-tick"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.15, delay: index * 0.025 }}
-        />
-      ))}
+      <motion.div
+        className="home-instrument-ruler home-instrument-ruler-bottom"
+        style={{ x: bottomRulerX }}
+        aria-hidden="true"
+      />
+      <motion.span className="home-instrument-scan" style={{ left: scanLeft }} aria-hidden="true" />
+      <div
+        className="home-instrument-axis-plane"
+        style={
+          {
+            "--axis-progress": `${coordinates.progress}%`,
+          } as CSSProperties
+        }
+      >
+        <span className="home-instrument-axis home-instrument-axis-x" aria-hidden="true" />
+        <span className="home-instrument-axis home-instrument-axis-y" aria-hidden="true" />
+        <span className="home-instrument-origin" aria-hidden="true" />
+        <div className="home-instrument-x-ticks" aria-hidden="true">
+          {X_AXIS_TICKS.map((tick, index) => (
+            <span
+              key={tick}
+              style={
+                {
+                  "--tick-left": `${(index / (X_AXIS_TICKS.length - 1)) * 100}%`,
+                } as CSSProperties
+              }
+            >
+              {tick}
+            </span>
+          ))}
+        </div>
+        <div className="home-instrument-y-ticks" aria-hidden="true">
+          {Y_AXIS_TICKS.map((tick) => (
+            <span
+              key={tick}
+              style={
+                {
+                  "--tick-top": `${(tick / Y_AXIS_TICKS[Y_AXIS_TICKS.length - 1]) * 100}%`,
+                } as CSSProperties
+              }
+            >
+              {formatYAxisTick(tick)}
+            </span>
+          ))}
+        </div>
+        <span className="home-instrument-current home-instrument-current-x" aria-hidden="true">
+          x: {coordinates.x}
+        </span>
+        <span className="home-instrument-current home-instrument-current-y" aria-hidden="true">
+          y: {formatCoordinate(coordinates.y)}
+        </span>
+        <div className="home-instrument-card-markers" aria-label="Jump to section">
+          {markers.map((marker, index) => (
+            <button
+              key={marker.id}
+              type="button"
+              className="home-instrument-card-marker"
+              data-section={marker.id}
+              data-active={activeMarker === marker.id}
+              data-edge={index === 0 ? "start" : index === markers.length - 1 ? "end" : undefined}
+              style={
+                {
+                  "--marker-left": `${(marker.value / maxScroll) * 100}%`,
+                } as CSSProperties
+              }
+              aria-label={`Jump to ${marker.label}`}
+              aria-current={activeMarker === marker.id ? "true" : undefined}
+              onClick={() => onSeek(marker.value)}
+            >
+              <span className="home-instrument-card-marker-dot" />
+              <span className="home-instrument-card-marker-label">{marker.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
@@ -360,6 +443,15 @@ function HomeRuler({
 export function HomeSheet({ content }: { content: HomeSheetContent }) {
   const reduceMotion = useReducedMotion();
   const maxScroll = getFrameLeft(FRAME_COUNT - 1);
+  const sectionMarkers = useMemo<HomeSectionMarker[]>(
+    () =>
+      content.frames.map((frame, index) => ({
+        id: frame.kind === "slide" ? frame.icon : "contact",
+        label: frame.title,
+        value: getFrameLeft(index + 1),
+      })),
+    [content.frames],
+  );
   const scroll = useMotionValue(0);
   const smoothScroll = useSpring(scroll, { stiffness: 500, damping: 58, mass: 0.9 });
   const baseScale = useViewportScale();
@@ -457,13 +549,18 @@ export function HomeSheet({ content }: { content: HomeSheetContent }) {
       className="home-stage"
       style={stageStyle}
       onMouseDown={(event) => {
-        if (!(event.target as Element).closest(".home-minimap")) {
+        if (!(event.target as Element).closest("a, button, input")) {
           event.preventDefault();
         }
       }}
     >
       <p className="vh">{content.srTitle}</p>
-      <HomeRuler scroll={smoothScroll} maxScroll={maxScroll} onSeek={seekTo} />
+      <ScrollInstrument
+        scroll={smoothScroll}
+        maxScroll={maxScroll}
+        markers={sectionMarkers}
+        onSeek={seekTo}
+      />
       <button
         type="button"
         className="home-crosshair"
@@ -492,7 +589,6 @@ export function HomeSheet({ content }: { content: HomeSheetContent }) {
             <IntroFrame
               lines={content.introLines}
               subtitle={content.introSubtitle}
-              inverseScale={inverseScale}
               reduceMotion={Boolean(reduceMotion)}
             />
             {content.frames.map((frame, index) =>

@@ -580,6 +580,385 @@ a {
   color: var(--accent-contact);
 }
 
+.home-scroll-instrument {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.home-instrument-ruler {
+  position: absolute;
+  left: -140px;
+  width: calc(100vw + 280px);
+  height: 88px;
+  opacity: 0.36;
+  background-image: repeating-linear-gradient(
+    90deg,
+    transparent 0,
+    transparent 82px,
+    color-mix(in srgb, var(--muted) 54%, transparent) 82px,
+    color-mix(in srgb, var(--muted) 54%, transparent) 83px,
+    transparent 83px,
+    transparent 164px
+  );
+  mask-image: linear-gradient(90deg, transparent, #000 16%, #000 84%, transparent);
+}
+
+.home-instrument-ruler::before {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  left: 0;
+  height: 1px;
+  background: color-mix(in srgb, var(--muted) 38%, transparent);
+  content: "";
+}
+
+.home-instrument-ruler-top {
+  top: 118px;
+}
+
+.home-instrument-ruler-bottom {
+  bottom: 70px;
+  opacity: 0.24;
+}
+
+.home-instrument-scan {
+  position: absolute;
+  top: 108px;
+  height: 110px;
+  border-left: 1px solid color-mix(in srgb, var(--accent) 36%, transparent);
+  opacity: 0.42;
+  transform: translateX(-50%);
+}
+
+.home-instrument-scan::before {
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  width: 7px;
+  height: 7px;
+  background: var(--accent);
+  content: "";
+  opacity: 0.62;
+}
+
+.home-instrument-axis-plane {
+  position: fixed;
+  top: 108px;
+  right: max(28px, calc(50% - 684px));
+  bottom: 112px;
+  left: 8px;
+  color: var(--muted);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 10px;
+  line-height: 1;
+}
+
+.home-instrument-axis {
+  position: absolute;
+  display: block;
+}
+
+.home-instrument-axis-x {
+  bottom: 0;
+  left: 30px;
+  width: 100%;
+  max-width: calc(100% - 30px);
+  height: 30px;
+  border-top: 1px solid color-mix(in srgb, var(--muted) 48%, transparent);
+  background-image: repeating-linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--muted) 42%, transparent) 0,
+    color-mix(in srgb, var(--muted) 42%, transparent) 1px,
+    transparent 1px,
+    transparent 14px
+  );
+  background-position: 0 0;
+  background-repeat: repeat-x;
+  background-size: auto 14px;
+}
+
+.home-instrument-axis-y {
+  top: 0;
+  left: 0;
+  width: 30px;
+  height: calc(100% - 32px);
+  border-left: 1px solid color-mix(in srgb, var(--muted) 48%, transparent);
+  background-image: repeating-linear-gradient(
+    0deg,
+    color-mix(in srgb, var(--muted) 42%, transparent) 0,
+    color-mix(in srgb, var(--muted) 42%, transparent) 1px,
+    transparent 1px,
+    transparent 14px
+  );
+  background-position: 0 0;
+  background-repeat: repeat-y;
+  background-size: 14px auto;
+}
+
+.home-instrument-origin {
+  position: absolute;
+  bottom: -3px;
+  left: -3px;
+  width: 7px;
+  height: 7px;
+  background: var(--accent);
+  opacity: 0.76;
+}
+
+.home-instrument-axis,
+.home-instrument-origin,
+.home-instrument-x-ticks,
+.home-instrument-y-ticks,
+.home-instrument-current {
+  opacity: 0.54;
+}
+
+.home-instrument-x-ticks,
+.home-instrument-y-ticks {
+  position: absolute;
+  color: color-mix(in srgb, var(--muted) 86%, transparent);
+}
+
+.home-instrument-x-ticks {
+  right: 0;
+  bottom: -30px;
+  left: 30px;
+  height: 18px;
+}
+
+.home-instrument-x-ticks span {
+  position: absolute;
+  left: var(--tick-left);
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.home-instrument-y-ticks {
+  top: 0;
+  bottom: 32px;
+  left: 16px;
+  width: 36px;
+}
+
+.home-instrument-y-ticks span {
+  position: absolute;
+  top: var(--tick-top);
+  transform: translateY(-50%);
+  white-space: nowrap;
+}
+
+.home-instrument-current {
+  position: absolute;
+  display: inline-flex;
+  min-width: 46px;
+  justify-content: center;
+  border: 1px solid color-mix(in srgb, var(--muted) 42%, transparent);
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--background) 86%, transparent);
+  color: color-mix(in srgb, var(--foreground) 58%, var(--muted));
+  padding: 5px 7px;
+  box-shadow: 0 8px 18px color-mix(in srgb, var(--foreground) 6%, transparent);
+}
+
+.home-instrument-current::after {
+  position: absolute;
+  background: var(--accent);
+  content: "";
+  opacity: 0.76;
+}
+
+.home-instrument-current-x {
+  bottom: 20px;
+  left: var(--axis-progress);
+  transform: translateX(-50%);
+}
+
+.home-instrument-current-x::after {
+  bottom: -21px;
+  left: 50%;
+  width: 1px;
+  height: 20px;
+}
+
+.home-instrument-current-y {
+  top: var(--axis-progress);
+  left: 30px;
+  transform: translateY(-50%);
+}
+
+.home-instrument-current-y::after {
+  top: 50%;
+  left: -31px;
+  width: 30px;
+  height: 1px;
+}
+
+.home-instrument-card-markers {
+  position: absolute;
+  right: 0;
+  bottom: 30px;
+  left: 30px;
+  height: 32px;
+  pointer-events: auto;
+}
+
+.home-instrument-card-marker {
+  position: absolute;
+  top: 0;
+  left: var(--marker-left);
+  display: flex;
+  width: 62px;
+  height: 34px;
+  transform: translateX(-50%);
+  align-items: flex-start;
+  justify-content: center;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font: inherit;
+  padding: 0;
+}
+
+.home-instrument-card-marker[data-edge="start"] {
+  transform: none;
+}
+
+.home-instrument-card-marker[data-edge="end"] {
+  transform: translateX(-100%);
+}
+
+.home-instrument-card-marker-dot {
+  position: relative;
+  width: 8px;
+  height: 8px;
+  border: 1px solid color-mix(in srgb, var(--section-accent) 72%, transparent);
+  background: color-mix(in srgb, var(--section-accent) 16%, var(--background));
+  transform: translateY(-50%);
+  transition:
+    background 160ms ease,
+    border-color 160ms ease,
+    transform 160ms ease,
+    width 160ms ease,
+    height 160ms ease;
+}
+
+.home-instrument-card-marker-dot::after {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  width: 1px;
+  height: 10px;
+  transform: translateX(-50%);
+  background: color-mix(in srgb, var(--section-accent) 54%, transparent);
+  content: "";
+}
+
+.home-instrument-card-marker-label {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: color-mix(in srgb, var(--muted) 76%, transparent);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 9px;
+  line-height: 1;
+  white-space: nowrap;
+  transition:
+    color 160ms ease,
+    opacity 160ms ease,
+    transform 160ms ease;
+}
+
+.home-instrument-card-marker:hover .home-instrument-card-marker-dot,
+.home-instrument-card-marker:focus-visible .home-instrument-card-marker-dot,
+.home-instrument-card-marker[data-active="true"] .home-instrument-card-marker-dot {
+  width: 12px;
+  height: 12px;
+  border-color: var(--section-accent);
+  background: var(--section-accent);
+  transform: translateY(-50%) rotate(45deg);
+}
+
+.home-instrument-card-marker:hover .home-instrument-card-marker-label,
+.home-instrument-card-marker:focus-visible .home-instrument-card-marker-label,
+.home-instrument-card-marker[data-active="true"] .home-instrument-card-marker-label {
+  color: var(--section-accent);
+  opacity: 1;
+  transform: translateX(-50%) translateY(2px);
+}
+
+.home-instrument-card-marker:focus-visible {
+  outline: 1px solid color-mix(in srgb, var(--section-accent) 72%, transparent);
+  outline-offset: 4px;
+}
+
+.home-instrument-swatches {
+  position: fixed;
+  right: max(24px, calc(50% - 660px));
+  bottom: 42px;
+  display: flex;
+  gap: 14px;
+  color: var(--muted);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 11px;
+  line-height: 1;
+  opacity: 0.58;
+}
+
+.home-instrument-swatches span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.home-instrument-swatches span::before {
+  width: 8px;
+  height: 8px;
+  background: var(--section-accent, var(--accent));
+  content: "";
+}
+
+.home-minimap-marker[data-section="intro"],
+.home-instrument-card-marker[data-section="intro"],
+.home-instrument-swatches span[data-section="intro"] {
+  --section-accent: var(--accent);
+}
+
+.home-minimap-marker[data-section="work"],
+.home-instrument-card-marker[data-section="work"],
+.home-instrument-swatches span[data-section="work"] {
+  --section-accent: var(--accent-work);
+}
+
+.home-minimap-marker[data-section="projects"],
+.home-instrument-card-marker[data-section="projects"],
+.home-instrument-swatches span[data-section="projects"] {
+  --section-accent: var(--accent-projects);
+}
+
+.home-minimap-marker[data-section="writing"],
+.home-instrument-card-marker[data-section="writing"],
+.home-instrument-swatches span[data-section="writing"] {
+  --section-accent: var(--accent-writing);
+}
+
+.home-minimap-marker[data-section="about"],
+.home-instrument-card-marker[data-section="about"],
+.home-instrument-swatches span[data-section="about"] {
+  --section-accent: var(--accent-about);
+}
+
+.home-minimap-marker[data-section="contact"],
+.home-instrument-card-marker[data-section="contact"],
+.home-instrument-swatches span[data-section="contact"] {
+  --section-accent: var(--accent-contact);
+}
+
 @media (max-width: 760px), (max-height: 560px) {
   .home-portrait {
     display: none;
@@ -655,6 +1034,112 @@ a {
     background 200ms ease-in-out 40ms,
     border-color 200ms ease-in-out,
     opacity 200ms ease-in-out 80ms;
+}
+
+.home-minimap-marker {
+  position: absolute;
+  top: 1px;
+  left: var(--marker-left);
+  z-index: 4;
+  display: grid;
+  width: 34px;
+  height: 28px;
+  place-items: center;
+  transform: translateX(-50%);
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font: inherit;
+  padding: 0;
+}
+
+.home-minimap-marker-dot {
+  width: 9px;
+  height: 9px;
+  border: 1px solid color-mix(in srgb, var(--section-accent) 64%, transparent);
+  background: color-mix(in srgb, var(--section-accent) 20%, var(--background));
+  transition:
+    width 160ms ease,
+    height 160ms ease,
+    background 160ms ease,
+    border-color 160ms ease,
+    transform 160ms ease;
+}
+
+.home-minimap-marker-label {
+  position: absolute;
+  top: 29px;
+  left: 50%;
+  color: var(--muted);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 10px;
+  line-height: 1;
+  opacity: 0.46;
+  transform: translateX(-50%);
+  transition:
+    color 160ms ease,
+    opacity 160ms ease,
+    transform 160ms ease;
+  white-space: nowrap;
+}
+
+.home-minimap-marker[data-edge="start"] .home-minimap-marker-label {
+  left: 0;
+  transform: none;
+}
+
+.home-minimap-marker[data-edge="end"] .home-minimap-marker-label {
+  right: 0;
+  left: auto;
+  transform: none;
+}
+
+.home-minimap-marker:hover .home-minimap-marker-dot,
+.home-minimap-marker:focus-visible .home-minimap-marker-dot,
+.home-minimap-marker[data-active="true"] .home-minimap-marker-dot {
+  width: 15px;
+  height: 15px;
+  border-color: var(--section-accent);
+  background: var(--section-accent);
+  transform: rotate(45deg);
+}
+
+.home-minimap-marker:hover .home-minimap-marker-label,
+.home-minimap-marker:focus-visible .home-minimap-marker-label,
+.home-minimap-marker[data-active="true"] .home-minimap-marker-label {
+  color: var(--section-accent);
+  opacity: 1;
+  transform: translateX(-50%) translateY(2px);
+}
+
+.home-minimap-marker[data-edge="start"]:hover .home-minimap-marker-label,
+.home-minimap-marker[data-edge="start"]:focus-visible .home-minimap-marker-label,
+.home-minimap-marker[data-edge="start"][data-active="true"] .home-minimap-marker-label,
+.home-minimap-marker[data-edge="end"]:hover .home-minimap-marker-label,
+.home-minimap-marker[data-edge="end"]:focus-visible .home-minimap-marker-label,
+.home-minimap-marker[data-edge="end"][data-active="true"] .home-minimap-marker-label {
+  transform: translateY(2px);
+}
+
+.home-minimap-marker:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--section-accent) 62%, transparent);
+  outline-offset: 3px;
+}
+
+@media (max-width: 760px), (max-height: 560px) {
+  .home-scroll-instrument {
+    display: none;
+  }
+
+  .home-minimap-marker {
+    width: 26px;
+  }
+
+  .home-minimap-marker-label,
+  .home-instrument-card-marker-label {
+    display: none;
+  }
 }
 
 .home-crosshair {
