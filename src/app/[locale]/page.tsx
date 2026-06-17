@@ -30,13 +30,12 @@ export default async function HomePage({
 
   const content: HomeSheetContent = {
     srTitle: home("sheet.srTitle"),
+    introSubtitle: home("sheet.introSubtitle"),
     introLines: [
       { text: home("sheet.intro1") },
       { text: home("sheet.intro2"), offset: true },
       { text: home("sheet.intro3") },
       { text: home("sheet.intro4"), offset: true },
-      { text: home("sheet.intro5") },
-      { text: home("sheet.intro6"), offset: true },
     ],
     frames: [
       {
@@ -44,24 +43,28 @@ export default async function HomePage({
         title: nav("work"),
         label: home("sheet.workLabel"),
         href: "/work",
+        icon: "work",
       },
       {
         kind: "slide",
         title: projects("title"),
         label: home("sheet.projectsLabel"),
         href: "/projects",
+        icon: "projects",
       },
       {
         kind: "slide",
         title: nav("writing"),
         label: home("sheet.writingLabel"),
         href: "/writing",
+        icon: "writing",
       },
       {
         kind: "slide",
         title: nav("about"),
         label: home("sheet.aboutLabel"),
         href: "/about",
+        icon: "about",
       },
       {
         kind: "contact",

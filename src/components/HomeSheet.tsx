@@ -10,6 +10,7 @@ import {
 } from "framer-motion";
 import type { AnimationPlaybackControls, MotionValue } from "framer-motion";
 import { Link } from "@/i18n/routing";
+import Image from "next/image";
 import {
   useEffect,
   useMemo,
@@ -29,6 +30,7 @@ type SlideFrame = {
   title: string;
   label: string;
   href: string;
+  icon: FrameIconName;
 };
 
 type ContactFrame = {
@@ -45,8 +47,11 @@ type ContactFrame = {
   };
 };
 
+type FrameIconName = "intro" | "work" | "projects" | "writing" | "about" | "contact";
+
 export type HomeSheetContent = {
   srTitle: string;
+  introSubtitle: string;
   introLines: {
     text: string;
     offset?: boolean;
@@ -88,10 +93,12 @@ function FloatingLabel({
   children,
   inverseScale,
   active,
+  icon,
 }: {
   children: ReactNode;
   inverseScale: MotionValue<number>;
   active?: boolean;
+  icon: FrameIconName;
 }) {
   return (
     <motion.span
@@ -99,48 +106,128 @@ function FloatingLabel({
       data-active={active}
       style={{ scale: inverseScale }}
     >
+      <FrameIcon name={icon} />
       {children}
     </motion.span>
   );
 }
 
+function FrameIcon({ name }: { name: FrameIconName }) {
+  if (name === "intro") {
+    return (
+      <span className="home-frame-icon home-frame-icon-status" data-icon={name} aria-hidden="true">
+        <span />
+        <svg viewBox="0 0 24 24">
+          <path d="M12 3v5" />
+          <path d="M12 16v5" />
+          <path d="M3 12h5" />
+          <path d="M16 12h5" />
+        </svg>
+      </span>
+    );
+  }
+
+  const paths: Record<Exclude<FrameIconName, "intro">, ReactNode> = {
+    work: (
+      <>
+        <path d="M8 8V6.8A2.8 2.8 0 0 1 10.8 4h2.4A2.8 2.8 0 0 1 16 6.8V8" />
+        <path d="M5 8h14v10H5z" />
+        <path d="M9 12h6" />
+      </>
+    ),
+    projects: (
+      <>
+        <path d="M5 5h6v6H5z" />
+        <path d="M13 5h6v6h-6z" />
+        <path d="M5 13h6v6H5z" />
+        <path d="M13 13h6v6h-6z" />
+      </>
+    ),
+    writing: (
+      <>
+        <path d="M6 19h12" />
+        <path d="M8 15 17.5 5.5a2 2 0 0 1 3 3L11 18l-4 1z" />
+      </>
+    ),
+    about: (
+      <>
+        <path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8z" />
+        <path d="M4.5 20a7.5 7.5 0 0 1 15 0" />
+      </>
+    ),
+    contact: (
+      <>
+        <path d="M4 6h16v12H4z" />
+        <path d="m4 7 8 6 8-6" />
+      </>
+    ),
+  };
+
+  return (
+    <span className="home-frame-icon" data-icon={name} aria-hidden="true">
+      <svg viewBox="0 0 24 24">{paths[name]}</svg>
+    </span>
+  );
+}
+
 function IntroFrame({
   lines,
+  subtitle,
   inverseScale,
   reduceMotion,
 }: {
   lines: HomeSheetContent["introLines"];
+  subtitle: string;
   inverseScale: MotionValue<number>;
   reduceMotion: boolean;
 }) {
   return (
     <section className="home-frame home-frame-main" style={{ left: 0 }}>
-      <FloatingLabel inverseScale={inverseScale} active>
+      <FloatingLabel inverseScale={inverseScale} active icon="intro">
         Intro
       </FloatingLabel>
       <h1 className="vh">{lines.map((line) => line.text).join(" ")}</h1>
-      <div aria-hidden="true" className="home-intro-lines">
-        {lines.map((line, index) => (
-          <span
-            key={`${line.text}-${index}`}
-            className="home-intro-line"
-            data-variant={line.offset ? "offset" : undefined}
-          >
-            <motion.span
-              initial={reduceMotion ? { opacity: 0 } : { y: 100, opacity: 0 }}
-              animate={reduceMotion ? { opacity: 1 } : { y: 0, opacity: 1 }}
-              transition={{
-                type: "spring",
-                stiffness: 240,
-                damping: 32,
-                mass: 0.1,
-                delay: 0.18 + index * 0.09,
-              }}
+      <Image
+        src="/portrait.png"
+        alt=""
+        width={1024}
+        height={1024}
+        className="home-portrait"
+        draggable={false}
+        aria-hidden="true"
+      />
+      <div className="home-intro-copy">
+        <div aria-hidden="true" className="home-intro-lines">
+          {lines.map((line, index) => (
+            <span
+              key={`${line.text}-${index}`}
+              className="home-intro-line"
+              data-variant={line.offset ? "offset" : undefined}
             >
-              {line.text}
-            </motion.span>
-          </span>
-        ))}
+              <motion.span
+                initial={reduceMotion ? { opacity: 0 } : { y: 118, opacity: 0 }}
+                animate={reduceMotion ? { opacity: 1 } : { y: 0, opacity: 1 }}
+                transition={{
+                  type: "spring",
+                  stiffness: 240,
+                  damping: 32,
+                  mass: 0.1,
+                  delay: 0.18 + index * 0.09,
+                }}
+              >
+                {line.text}
+              </motion.span>
+            </span>
+          ))}
+        </div>
+        <motion.p
+          className="home-intro-subtitle"
+          initial={reduceMotion ? { opacity: 0 } : { y: 18, opacity: 0 }}
+          animate={reduceMotion ? { opacity: 1 } : { y: 0, opacity: 1 }}
+          transition={{ duration: 0.35, ease: "easeOut", delay: 0.72 }}
+        >
+          {subtitle}
+        </motion.p>
       </div>
     </section>
   );
@@ -164,7 +251,9 @@ function SlideFrameView({
       className="home-frame home-frame-slide"
       style={{ left: STRIDE * index }}
     >
-      <FloatingLabel inverseScale={inverseScale}>{frame.label}</FloatingLabel>
+      <FloatingLabel inverseScale={inverseScale} icon={frame.icon}>
+        {frame.label}
+      </FloatingLabel>
       <motion.div className="home-frame-contents" style={{ x: parallax }}>
         <Link href={frame.href} className="home-giant-link" data-cursor>
           <span>{frame.title}</span>
@@ -195,7 +284,9 @@ function ContactFrameView({
       className="home-frame home-frame-contact"
       style={{ left: STRIDE * 5 }}
     >
-      <FloatingLabel inverseScale={inverseScale}>{frame.label}</FloatingLabel>
+      <FloatingLabel inverseScale={inverseScale} icon="contact">
+        {frame.label}
+      </FloatingLabel>
       <a className="home-corner-link" data-position="top-left" href="https://x.com/jiaqizhuang">
         {frame.links.twitter}
       </a>
@@ -209,6 +300,7 @@ function ContactFrameView({
         {frame.links.github}
       </a>
       <button className="home-copy-email" type="button" onClick={copyEmail}>
+        <FrameIcon name="contact" />
         <span className="home-copy-stack">
           <motion.span
             animate={{ y: copied ? -90 : 0 }}
@@ -379,6 +471,7 @@ export function HomeSheet({ content }: { content: HomeSheetContent }) {
           <motion.div className="home-strip" style={{ x: stripX }}>
             <IntroFrame
               lines={content.introLines}
+              subtitle={content.introSubtitle}
               inverseScale={inverseScale}
               reduceMotion={Boolean(reduceMotion)}
             />
