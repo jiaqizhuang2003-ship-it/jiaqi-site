@@ -76,8 +76,7 @@ export default async function HomePage({
         copyAnnouncement: home("sheet.copyAnnouncement"),
         links: {
           twitter: home("sheet.twitter"),
-          yearCurrent: "2026",
-          yearPrevious: "2025",
+          linkedin: home("sheet.linkedin"),
           github: home("sheet.github"),
         },
       },

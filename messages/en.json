@@ -42,7 +42,7 @@
       "copied": "Copied",
       "copyEmail": "Copy email",
       "email": "Email",
-      "github": "GitHub",
+      "github": "Github",
       "twitter": "X",
       "linkedin": "LinkedIn"
     },
@@ -62,8 +62,9 @@
       "email": "Email",
       "copied": "Copied",
       "copyAnnouncement": "Copied email to clipboard",
-      "twitter": "X / Twitter",
-      "github": "GitHub"
+      "twitter": "X/Twitter",
+      "linkedin": "LinkedIn",
+      "github": "Github"
     }
   },
   "work": {
@@ -96,8 +97,8 @@
     "description": "Contact Jiaqi Zhuang for AI projects and collaborations.",
     "intro": "Open to interesting AI projects, especially agents and workflows with real operational pressure.",
     "email": "Email",
-    "github": "GitHub",
-    "twitter": "X / Twitter",
+    "github": "Github",
+    "twitter": "X/Twitter",
     "linkedin": "LinkedIn"
   }
 }

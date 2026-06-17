@@ -41,8 +41,8 @@
       "skills": ["智能体", "工作流", "记忆"],
       "copied": "已复制",
       "copyEmail": "复制邮箱",
-      "email": "邮箱",
-      "github": "GitHub",
+      "email": "Email",
+      "github": "Github",
       "twitter": "X",
       "linkedin": "LinkedIn"
     },
@@ -59,11 +59,12 @@
       "writingLabel": "关于智能体和工作流的笔记",
       "aboutLabel": "长周期智能体、记忆与工具",
       "contactLabel": "联系",
-      "email": "邮箱",
+      "email": "Email",
       "copied": "已复制",
       "copyAnnouncement": "邮箱已复制",
-      "twitter": "X / Twitter",
-      "github": "GitHub"
+      "twitter": "X/Twitter",
+      "linkedin": "LinkedIn",
+      "github": "Github"
     }
   },
   "work": {
@@ -95,9 +96,9 @@
     "title": "联系",
     "description": "联系 Jiaqi Zhuang，讨论 AI 项目与合作。",
     "intro": "欢迎交流有意思的 AI 项目，尤其是真实业务压力下的智能体和工作流。",
-    "email": "邮箱",
-    "github": "GitHub",
-    "twitter": "X / Twitter",
+    "email": "Email",
+    "github": "Github",
+    "twitter": "X/Twitter",
     "linkedin": "LinkedIn"
   }
 }

@@ -1,5 +1,13 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: "Fraunces Display";
+  src: url("/fonts/Fraunces-800.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+}
+
 :root {
   color-scheme: light;
   --font-geist-sans:
@@ -8,7 +16,13 @@
   --font-geist-mono:
     ui-monospace, "SFMono-Regular", Menlo, Consolas, "Liberation Mono",
     monospace;
+  --font-display: "Fraunces Display", Georgia, serif;
   --accent: #2348e0;
+  --accent-work: #2348e0;
+  --accent-projects: #b75535;
+  --accent-writing: #247857;
+  --accent-about: #7457c8;
+  --accent-contact: #222222;
   --background: #ececec;
   --surface: #ffffff;
   --surface-hover: #f7f7f7;
@@ -312,6 +326,26 @@ a {
   pointer-events: auto;
 }
 
+.home-frame[data-frame="work"] {
+  --frame-accent: var(--accent-work);
+}
+
+.home-frame[data-frame="projects"] {
+  --frame-accent: var(--accent-projects);
+}
+
+.home-frame[data-frame="writing"] {
+  --frame-accent: var(--accent-writing);
+}
+
+.home-frame[data-frame="about"] {
+  --frame-accent: var(--accent-about);
+}
+
+.home-frame[data-frame="contact"] {
+  --frame-accent: var(--accent-contact);
+}
+
 .home-frame-label {
   position: absolute;
   left: 6px;
@@ -367,8 +401,7 @@ a {
 }
 
 .home-frame-label:hover .home-frame-icon,
-.home-copy-email:hover .home-frame-icon,
-.home-copy-email:focus-visible .home-frame-icon {
+.home-frame-label:focus-visible .home-frame-icon {
   color: var(--accent);
   opacity: 1;
   transform: translateY(-1px);
@@ -376,17 +409,19 @@ a {
 
 .home-portrait {
   position: absolute;
-  left: -104px;
-  bottom: -8px;
+  left: -520px;
+  bottom: -82px;
   z-index: 0;
-  width: 740px;
-  height: 740px;
+  width: 1020px;
+  height: 1020px;
   object-fit: contain;
-  opacity: 0.86;
+  opacity: 1;
   user-select: none;
   pointer-events: none;
-  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 44%, transparent 76%);
-  mask-image: linear-gradient(to bottom, #000 0%, #000 44%, transparent 76%);
+}
+
+.home-frame-main .home-frame-label {
+  left: -470px;
 }
 
 .home-intro-copy {
@@ -394,10 +429,10 @@ a {
   z-index: 1;
   display: grid;
   align-content: center;
-  width: 500px;
+  width: 680px;
   height: 100%;
-  margin-left: 660px;
-  padding-bottom: 6px;
+  margin-left: 540px;
+  padding-bottom: 0;
 }
 
 .home-intro-lines {
@@ -409,17 +444,18 @@ a {
 .home-intro-line {
   display: block;
   overflow: hidden;
-  height: 100px;
-  padding-bottom: 14px;
-  font-size: 82px;
-  font-weight: 620;
-  letter-spacing: -0.072em;
-  line-height: 0.98;
+  height: 136px;
+  padding-bottom: 18px;
+  font-family: var(--font-display);
+  font-size: 124px;
+  font-weight: 800;
+  letter-spacing: 0;
+  line-height: 0.9;
   white-space: nowrap;
 }
 
 .home-intro-line[data-variant="offset"] {
-  padding-left: 64px;
+  padding-left: 92px;
 }
 
 .home-intro-line span {
@@ -427,11 +463,19 @@ a {
   will-change: transform, opacity;
 }
 
+.home-frame-main .home-intro-line:nth-child(3) span {
+  color: var(--accent-work);
+}
+
+.home-frame-main .home-intro-line:nth-child(5) span {
+  color: var(--accent-writing);
+}
+
 .home-intro-subtitle {
-  margin-top: 22px;
+  margin-top: 12px;
   margin-left: 4px;
   font-family: var(--font-geist-mono), monospace;
-  font-size: 18px;
+  font-size: 22px;
   line-height: 1.35;
   color: var(--secondary);
   letter-spacing: 0;
@@ -454,37 +498,23 @@ a {
 
 .home-giant-link span {
   display: block;
+  font-family: var(--font-display);
   font-size: 250px;
-  font-weight: 620;
-  letter-spacing: -0.09em;
-  line-height: 0.78;
+  font-weight: 800;
+  letter-spacing: 0;
+  line-height: 0.82;
   transition:
     color 160ms ease,
-    letter-spacing 220ms cubic-bezier(0.22, 1, 0.36, 1);
+    transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .home-giant-link:hover span,
 .home-giant-link:focus-visible span {
-  color: var(--accent);
-  letter-spacing: -0.1em;
-}
-
-.home-contact-title {
-  margin: 0;
-  color: var(--foreground);
-}
-
-.home-contact-title span {
-  display: block;
-  font-size: 250px;
-  font-weight: 620;
-  letter-spacing: -0.09em;
-  line-height: 0.78;
+  color: var(--frame-accent, var(--accent));
+  transform: translateY(-4px);
 }
 
 .home-giant-link:focus-visible,
-.home-corner-link:focus-visible,
-.home-copy-email:focus-visible,
 .home-crosshair:focus-visible {
   outline: 4px solid color-mix(in srgb, var(--accent) 68%, transparent);
   outline-offset: 8px;
@@ -493,10 +523,11 @@ a {
 .home-frame-contents p {
   width: 620px;
   margin-top: 36px;
+  font-family: var(--font-display);
   font-size: 72px;
-  font-weight: 520;
-  letter-spacing: -0.06em;
-  line-height: 0.95;
+  font-weight: 800;
+  letter-spacing: 0;
+  line-height: 1;
   color: var(--secondary);
 }
 
@@ -506,92 +537,47 @@ a {
   align-items: center;
 }
 
-.home-contact-contents {
-  display: grid;
-  gap: 42px;
-  will-change: transform;
+.home-contact-meta {
+  display: flex;
+  flex-wrap: wrap;
+  width: 620px;
+  margin-top: 36px;
+  gap: 12px 24px;
+  color: var(--secondary);
+  font-family: var(--font-display);
+  font-size: 72px;
+  font-weight: 800;
+  letter-spacing: 0;
+  line-height: 1;
 }
 
-.home-corner-link {
-  position: absolute;
-  color: var(--foreground);
-  font-family: var(--font-geist-mono), monospace;
-  font-size: 22px;
-  text-decoration: none;
-  transition: color 160ms ease;
+.home-contact-meta span {
+  display: inline-block;
 }
 
-.home-corner-link:hover {
-  color: var(--accent);
+.home-frame[data-frame="work"] .home-giant-link,
+.home-frame[data-frame="work"] .home-frame-label {
+  color: var(--accent-work);
 }
 
-.home-corner-link[data-position="top-left"] {
-  left: 40px;
-  top: 36px;
+.home-frame[data-frame="projects"] .home-giant-link,
+.home-frame[data-frame="projects"] .home-frame-label {
+  color: var(--accent-projects);
 }
 
-.home-corner-link[data-position="top-right"] {
-  right: 40px;
-  top: 36px;
+.home-frame[data-frame="writing"] .home-giant-link,
+.home-frame[data-frame="writing"] .home-frame-label {
+  color: var(--accent-writing);
 }
 
-.home-corner-link[data-position="bottom-left"] {
-  left: 40px;
-  bottom: 36px;
+.home-frame[data-frame="about"] .home-giant-link,
+.home-frame[data-frame="about"] .home-frame-label {
+  color: var(--accent-about);
 }
 
-.home-corner-link[data-position="bottom-right"] {
-  right: 40px;
-  bottom: 36px;
-}
-
-.home-copy-email {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-self: start;
-  gap: 12px;
-  height: 48px;
-  min-width: 132px;
-  cursor: copy;
-  border: 0;
-  background: transparent;
-  color: var(--foreground);
-  font-family: var(--font-geist-sans), sans-serif;
-  font-size: 34px;
-  font-weight: 560;
-  letter-spacing: -0.055em;
-}
-
-.home-copy-email:hover {
-  color: var(--accent);
-}
-
-.home-copy-email .home-frame-icon {
-  width: 22px;
-  height: 22px;
-}
-
-.home-copy-email .home-frame-icon svg {
-  width: 22px;
-  height: 22px;
-  stroke-width: 1.5;
-}
-
-.home-copy-stack {
-  position: relative;
-  display: grid;
-  height: 48px;
-  overflow: hidden;
-}
-
-.home-copy-stack span {
-  grid-area: 1 / 1;
-  display: block;
-}
-
-.home-copy-stack span[data-copied="true"] {
-  color: var(--accent);
+.home-frame[data-frame="contact"] .home-giant-link,
+.home-frame[data-frame="contact"] .home-frame-label {
+  color: var(--accent-contact);
 }
 
 @media (max-width: 760px), (max-height: 560px) {
@@ -616,10 +602,39 @@ a {
   transform: translateX(-50%);
   align-items: center;
   justify-content: space-between;
-  pointer-events: none;
+  cursor: grab;
+  touch-action: none;
+  pointer-events: auto;
+}
+
+.home-minimap:active {
+  cursor: grabbing;
+}
+
+.home-minimap:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 62%, transparent);
+  outline-offset: 6px;
+}
+
+.home-minimap-range {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  cursor: inherit;
+  opacity: 0;
+  touch-action: none;
+}
+
+.home-minimap:has(.home-minimap-range:focus-visible) {
+  outline: 2px solid color-mix(in srgb, var(--accent) 62%, transparent);
+  outline-offset: 6px;
 }
 
 .home-minimap-tick {
+  position: relative;
+  z-index: 1;
   width: 1px;
   height: 15px;
   background: var(--muted);
@@ -629,6 +644,7 @@ a {
 .home-minimap-slider {
   position: absolute;
   top: 5px;
+  z-index: 1;
   width: 26px;
   height: 20px;
   border: 1px solid color-mix(in srgb, var(--accent) 62%, transparent);

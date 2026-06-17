@@ -71,7 +71,7 @@ export default async function LocaleLayout({
       className={`${GeistSans.variable} ${GeistMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className="min-h-full">
+      <body className="min-h-full" suppressHydrationWarning>
         <NextIntlClientProvider locale={locale as Locale} messages={messages}>
           <FilmGrain />
           <MagneticCursor />

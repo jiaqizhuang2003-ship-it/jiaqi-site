@@ -16,14 +16,20 @@ import {
   useMemo,
   useRef,
   useState,
+  type ChangeEvent,
   type CSSProperties,
   type ReactNode,
 } from "react";
 
 const SHEET_WIDTH = 1200;
 const SHEET_HEIGHT = 720;
-const STRIDE = 1240;
+const FIRST_FRAME_STRIDE = 1900;
+const FRAME_STRIDE = 1400;
 const FRAME_COUNT = 6;
+
+function getFrameLeft(index: number) {
+  return index === 0 ? 0 : FIRST_FRAME_STRIDE + (index - 1) * FRAME_STRIDE;
+}
 
 type SlideFrame = {
   kind: "slide";
@@ -42,8 +48,7 @@ type ContactFrame = {
   copyAnnouncement: string;
   links: {
     twitter: string;
-    yearCurrent: string;
-    yearPrevious: string;
+    linkedin: string;
     github: string;
   };
 };
@@ -183,7 +188,7 @@ function IntroFrame({
   reduceMotion: boolean;
 }) {
   return (
-    <section className="home-frame home-frame-main" style={{ left: 0 }}>
+    <section className="home-frame home-frame-main" data-frame="intro" style={{ left: 0 }}>
       <FloatingLabel inverseScale={inverseScale} active icon="intro">
         Intro
       </FloatingLabel>
@@ -194,6 +199,7 @@ function IntroFrame({
         width={1024}
         height={1024}
         className="home-portrait"
+        priority
         draggable={false}
         aria-hidden="true"
       />
@@ -245,12 +251,14 @@ function SlideFrameView({
   scroll: MotionValue<number>;
   inverseScale: MotionValue<number>;
 }) {
-  const parallax = useTransform(scroll, (value) => (value - index * STRIDE) * -0.035);
+  const frameLeft = getFrameLeft(index);
+  const parallax = useTransform(scroll, (value) => (value - frameLeft) * -0.035);
 
   return (
     <section
       className="home-frame home-frame-slide"
-      style={{ left: STRIDE * index }}
+      data-frame={frame.icon}
+      style={{ left: frameLeft }}
     >
       <FloatingLabel inverseScale={inverseScale} icon={frame.icon}>
         {frame.label}
@@ -272,60 +280,26 @@ function ContactFrameView({
   frame: ContactFrame;
   inverseScale: MotionValue<number>;
 }) {
-  const [copied, setCopied] = useState(false);
-
-  async function copyEmail() {
-    await navigator.clipboard.writeText("hi@jiaqi.dev");
-    setCopied(true);
-    window.setTimeout(() => setCopied(false), 1000);
-  }
-
   return (
     <section
       className="home-frame home-frame-contact"
-      style={{ left: STRIDE * 5 }}
+      data-frame="contact"
+      style={{ left: getFrameLeft(5) }}
     >
       <FloatingLabel inverseScale={inverseScale} icon="contact">
         {frame.label}
       </FloatingLabel>
-      <a className="home-corner-link" data-position="top-left" href="https://x.com/jiaqizhuang">
-        {frame.links.twitter}
-      </a>
-      <Link className="home-corner-link" data-position="top-right" href="/writing">
-        {frame.links.yearCurrent}
-      </Link>
-      <Link className="home-corner-link" data-position="bottom-left" href="/projects">
-        {frame.links.yearPrevious}
-      </Link>
-      <a className="home-corner-link" data-position="bottom-right" href="https://github.com/jiaqizhuang">
-        {frame.links.github}
-      </a>
-      <div className="home-contact-contents">
-        <h2 className="home-contact-title">
+      <div className="home-frame-contents home-contact-contents">
+        <Link href="/contact" className="home-giant-link" data-cursor>
           <span>{frame.title}</span>
-        </h2>
-        <button className="home-copy-email" type="button" onClick={copyEmail}>
-          <FrameIcon name="contact" />
-          <span className="home-copy-stack">
-            <motion.span
-              animate={{ y: copied ? -48 : 0 }}
-              transition={{ type: "spring", stiffness: 280, damping: 32 }}
-            >
-              {frame.email}
-            </motion.span>
-            <motion.span
-              animate={{ y: copied ? 0 : 48 }}
-              transition={{ type: "spring", stiffness: 280, damping: 32 }}
-              data-copied={copied}
-            >
-              {frame.copied}
-            </motion.span>
-          </span>
-        </button>
+        </Link>
+        <div className="home-contact-meta" aria-label={frame.label}>
+          <span>{frame.links.twitter}</span>
+          <span>{frame.links.linkedin}</span>
+          <span>{frame.links.github}</span>
+          <span>{frame.email}</span>
+        </div>
       </div>
-      <span className="vh" aria-live="polite">
-        {copied ? frame.copyAnnouncement : ""}
-      </span>
     </section>
   );
 }
@@ -333,14 +307,42 @@ function ContactFrameView({
 function HomeRuler({
   scroll,
   maxScroll,
+  onSeek,
 }: {
   scroll: MotionValue<number>;
   maxScroll: number;
+  onSeek: (value: number) => void;
 }) {
+  const [rangeValue, setRangeValue] = useState(0);
   const left = useTransform(scroll, (value) => `${(clamp(value / maxScroll, 0, 1) * 100).toFixed(2)}%`);
 
+  useEffect(() => {
+    return scroll.on("change", (value) => {
+      setRangeValue(clamp(value, 0, maxScroll));
+    });
+  }, [maxScroll, scroll]);
+
+  function onRangeChange(event: ChangeEvent<HTMLInputElement>) {
+    const next = Number(event.currentTarget.value);
+    setRangeValue(next);
+    onSeek(next);
+  }
+
   return (
-    <div className="home-minimap" aria-hidden="true">
+    <div
+      className="home-minimap"
+      aria-label="Scroll sections"
+    >
+      <input
+        className="home-minimap-range"
+        type="range"
+        min={0}
+        max={maxScroll}
+        step={1}
+        value={rangeValue}
+        aria-label="Scroll sections"
+        onChange={onRangeChange}
+      />
       <motion.span className="home-minimap-slider" style={{ left }} />
       {Array.from({ length: 20 }).map((_, index) => (
         <motion.span
@@ -357,12 +359,12 @@ function HomeRuler({
 
 export function HomeSheet({ content }: { content: HomeSheetContent }) {
   const reduceMotion = useReducedMotion();
-  const maxScroll = STRIDE * (FRAME_COUNT - 1);
+  const maxScroll = getFrameLeft(FRAME_COUNT - 1);
   const scroll = useMotionValue(0);
   const smoothScroll = useSpring(scroll, { stiffness: 500, damping: 58, mass: 0.9 });
   const baseScale = useViewportScale();
   const scale = useTransform([baseScale, smoothScroll], ([base, value]) => {
-    const depth = reduceMotion ? 0 : clamp(Number(value) / 2600, 0, 0.08);
+    const depth = reduceMotion ? 0 : clamp(Number(value) / 1800, 0, 0.2);
     return Number(base) * (1 - depth);
   });
   const inverseScale = useTransform(scale, (value) => 1 / Math.max(value, 0.001));
@@ -374,6 +376,14 @@ export function HomeSheet({ content }: { content: HomeSheetContent }) {
   const axisLockRef = useRef<"x" | "y" | null>(null);
   const springControlsRef = useRef<AnimationPlaybackControls | null>(null);
   const [crosshairActive, setCrosshairActive] = useState(false);
+  const seekTo = (value: number) => {
+    const next = clamp(value, 0, maxScroll);
+
+    axisLockRef.current = "y";
+    springControlsRef.current?.stop();
+    scroll.set(next);
+    window.scrollTo(0, next);
+  };
 
   useEffect(() => {
     history.scrollRestoration = "manual";
@@ -403,7 +413,7 @@ export function HomeSheet({ content }: { content: HomeSheetContent }) {
 
     function onKeyDown(event: globalThis.KeyboardEvent) {
       const step =
-        window.matchMedia("(pointer: coarse)").matches ? STRIDE / 5 : STRIDE / 3;
+        window.matchMedia("(pointer: coarse)").matches ? FRAME_STRIDE / 5 : FRAME_STRIDE / 3;
       const current = scroll.get();
 
       if (event.key === "ArrowRight") {
@@ -446,10 +456,14 @@ export function HomeSheet({ content }: { content: HomeSheetContent }) {
     <section
       className="home-stage"
       style={stageStyle}
-      onMouseDown={(event) => event.preventDefault()}
+      onMouseDown={(event) => {
+        if (!(event.target as Element).closest(".home-minimap")) {
+          event.preventDefault();
+        }
+      }}
     >
       <p className="vh">{content.srTitle}</p>
-      <HomeRuler scroll={smoothScroll} maxScroll={maxScroll} />
+      <HomeRuler scroll={smoothScroll} maxScroll={maxScroll} onSeek={seekTo} />
       <button
         type="button"
         className="home-crosshair"
