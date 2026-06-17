@@ -36,6 +36,7 @@ export default async function HomePage({
       { text: home("sheet.intro2"), offset: true },
       { text: home("sheet.intro3") },
       { text: home("sheet.intro4"), offset: true },
+      { text: home("sheet.intro5") },
     ],
     frames: [
       {
@@ -68,6 +69,7 @@ export default async function HomePage({
       },
       {
         kind: "contact",
+        title: nav("contact"),
         label: home("sheet.contactLabel"),
         email: home("sheet.email"),
         copied: home("sheet.copied"),

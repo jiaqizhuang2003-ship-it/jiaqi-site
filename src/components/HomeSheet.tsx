@@ -35,6 +35,7 @@ type SlideFrame = {
 
 type ContactFrame = {
   kind: "contact";
+  title: string;
   label: string;
   email: string;
   copied: string;
@@ -299,24 +300,29 @@ function ContactFrameView({
       <a className="home-corner-link" data-position="bottom-right" href="https://github.com/jiaqizhuang">
         {frame.links.github}
       </a>
-      <button className="home-copy-email" type="button" onClick={copyEmail}>
-        <FrameIcon name="contact" />
-        <span className="home-copy-stack">
-          <motion.span
-            animate={{ y: copied ? -90 : 0 }}
-            transition={{ type: "spring", stiffness: 280, damping: 32 }}
-          >
-            {frame.email}
-          </motion.span>
-          <motion.span
-            animate={{ y: copied ? 0 : 90 }}
-            transition={{ type: "spring", stiffness: 280, damping: 32 }}
-            data-copied={copied}
-          >
-            {frame.copied}
-          </motion.span>
-        </span>
-      </button>
+      <div className="home-contact-contents">
+        <h2 className="home-contact-title">
+          <span>{frame.title}</span>
+        </h2>
+        <button className="home-copy-email" type="button" onClick={copyEmail}>
+          <FrameIcon name="contact" />
+          <span className="home-copy-stack">
+            <motion.span
+              animate={{ y: copied ? -48 : 0 }}
+              transition={{ type: "spring", stiffness: 280, damping: 32 }}
+            >
+              {frame.email}
+            </motion.span>
+            <motion.span
+              animate={{ y: copied ? 0 : 48 }}
+              transition={{ type: "spring", stiffness: 280, damping: 32 }}
+              data-copied={copied}
+            >
+              {frame.copied}
+            </motion.span>
+          </span>
+        </button>
+      </div>
       <span className="vh" aria-live="polite">
         {copied ? frame.copyAnnouncement : ""}
       </span>
